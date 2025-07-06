@@ -66,7 +66,7 @@
 <body>
 
 <div style="font-size: 0;">
-    <img src="{{ asset('images\logo.png') }}" style="display: inline-block; vertical-align: middle; height: 50px; margin-left: 10px;">
+    <img src="{{ asset('storage\images\logo.png') }}" style="display: inline-block; vertical-align: middle; height: 50px; margin-left: 10px;">
 
     <h2 style="display: inline-block; vertical-align: middle; margin: 0; font-size: 18px;">
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Sportif Performans Bireysel Gelişim Raporu

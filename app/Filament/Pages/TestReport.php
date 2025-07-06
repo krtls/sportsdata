@@ -257,6 +257,12 @@ class TestReport extends Page implements HasTable
             ])
 
             ->headerActions([
+                Action::make('viewTeam')
+                    ->label('Takım Raporunu Görüntüle')
+                    ->icon('heroicon-o-eye')
+                    ->url(fn () => route('reports.team'))
+                    ->openUrlInNewTab()
+                    ->color('primary'),
                 Action::make('exportPdf')
                     ->label('Takım Raporu İndir')
                     ->icon('heroicon-o-arrow-down-tray')
@@ -301,17 +307,17 @@ class TestReport extends Page implements HasTable
             ])
 
             ->actions([
+                Tables\Actions\Action::make('view')
+                    ->label('Görüntüle')
+                    ->color('primary')
+                    ->icon('heroicon-o-eye')
+                    ->url(fn (Student $record) => route('reports.individual', $record))
+                    ->openUrlInNewTab(),
                 Tables\Actions\Action::make('pdf')
                     ->label('PDF')
                     ->color('success')
                     ->icon('heroicon-s-arrow-down-tray')
                     ->action(function (Student $record) {
-//                        return response()->streamDownload(function () use ($record) {
-//                            echo Pdf::loadHtml(
-//                                Blade::render('pdf', ['record' => $record])
-//                            )->stream();
-//                        }, $record->getFullName() . '.pdf');
-
                         $pdf = Pdf::loadView('exports.testReportIndividual',
                                                 [   'student' => $record,
                                                     'chartUrl' =>$this->indGeneratePieChart($record),

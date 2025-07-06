@@ -19,4 +19,10 @@ Route::middleware(['auth'])->group(function () {
     Volt::route('settings/appearance', 'settings.appearance')->name('settings.appearance');
 });
 
+// Test Report Routes
+Route::get('/reports/individual/{student}', [App\Http\Controllers\TestReportController::class, 'showIndividual'])
+    ->name('reports.individual');
+Route::get('/reports/team', [App\Http\Controllers\TestReportController::class, 'showTeam'])
+    ->name('reports.team');
+
 require __DIR__.'/auth.php';
