@@ -76,6 +76,18 @@ class TestReportController extends Controller
         ]);
     }
 
+    public function showIndividualNew($studentId)
+    {
+        $student = Student::with('tests', 'club')->findOrFail($studentId);
+        $chartData = $this->generateIndividualChartData($student);
+        $msg = $this->getIndividualMessage($student);
+        return view('reports.individual_new', [
+            'student' => $student,
+            'chartData' => $chartData,
+            'msg' => $msg
+        ]);
+    }
+
     private function generateIndividualChartData($student)
     {
         $labels = [];

@@ -24,5 +24,7 @@ Route::get('/reports/individual/{student}', [App\Http\Controllers\TestReportCont
     ->name('reports.individual');
 Route::get('/reports/team', [App\Http\Controllers\TestReportController::class, 'showTeam'])
     ->name('reports.team');
+Route::get('/reports/individual/{student}/new', [App\Http\Controllers\TestReportController::class, 'showIndividualNew'])
+    ->name('reports.individual.new');
 
 require __DIR__.'/auth.php';

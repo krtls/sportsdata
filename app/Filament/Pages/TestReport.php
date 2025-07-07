@@ -313,6 +313,12 @@ class TestReport extends Page implements HasTable
                     ->icon('heroicon-o-eye')
                     ->url(fn (Student $record) => route('reports.individual', $record))
                     ->openUrlInNewTab(),
+                Tables\Actions\Action::make('new_view')
+                    ->label('Yeni')
+                    ->color('warning')
+                    ->icon('heroicon-o-document-text')
+                    ->url(fn (Student $record) => route('reports.individual.new', $record))
+                    ->openUrlInNewTab(),
                 Tables\Actions\Action::make('pdf')
                     ->label('PDF')
                     ->color('success')
