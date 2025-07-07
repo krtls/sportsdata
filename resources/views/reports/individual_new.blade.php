@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bireysel Test Raporu - {{ $student->getFullName() }}</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    @vite('resources/css/app.css')
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -141,6 +143,14 @@
                 padding: 15px;
             }
         }
+        @media (max-width: 1100px) {
+            .gauge-grid { flex-wrap: wrap; }
+            .chart-wrapper { flex-basis: 45%; }
+        }
+        @media (max-width: 700px) {
+            .gauge-grid { flex-direction: column; align-items: center; }
+            .chart-wrapper { flex-basis: 100%; max-width: 100%; }
+        }
     </style>
 </head>
 <body>
@@ -161,11 +171,11 @@
                 <tr>
                     <th>Test Sırası</th>
                     <th>Test Tarihi</th>
-                    <th>Test Türü</th>
+                    {{-- <th>Test Türü</th>
                     <th>1. Ölçüm</th>
                     <th>2. Ölçüm</th>
                     <th>3. Ölçüm</th>
-                    <th class="best-score">Ölçüm Sonucu</th>
+                    <th class="best-score">Ölçüm Sonucu</th> --}}
                     <th>Servis Hızı Ortalaması</th>
                 </tr>
             </thead>
@@ -174,26 +184,42 @@
                 <tr>
                     <td>{{ $test->term }}</td>
                     <td>{{ $test->created_at->format('d/m/Y') }}</td>
-                    <td>Voleybol Servis Hızı</td>
+                    {{-- <td>Voleybol Servis Hızı</td>
                     <td>{{ $test->first_service_speed }}</td>
                     <td>{{ $test->second_service_speed }}</td>
                     <td>{{ $test->third_service_speed }}</td>
-                    <td class="best-score">{{ max($test->first_service_speed, $test->second_service_speed, $test->third_service_speed) }}</td>
+                    <td class="best-score">{{ max($test->first_service_speed, $test->second_service_speed, $test->third_service_speed) }}</td> --}}
                     <td>{{ number_format(($test->first_service_speed + $test->second_service_speed + $test->third_service_speed)/3, 2) }}</td>
                 </tr>
                 @endforeach
             </tbody>
         </table>
 
-        <div class="charts-container">
+    <h1 class="text-center bg-amber-300 p-4">Servis Hızları Ortalaması</h1>
+        <div class="gauge-grid" style="display: flex; flex-wrap: wrap; gap: 24px; justify-content: center; margin-bottom: 32px;">
+
             @foreach($student->tests as $test)
-                <div class="chart-wrapper" style="max-width: 250px; margin-bottom: 30px;">
-                    <div class="chart-title">
+                <div class="chart-wrapper" style="max-width: 220px; flex: 1 1 200px; min-width: 180px;">
+                    <div class="chart-title" style="text-align:center; margin-bottom:10px;">
                         {{ $test->term }}. Dönem Servis Hızı Ortalaması
                     </div>
-                    <canvas id="speedometerChart_{{ $test->id }}" width="200" height="120"></canvas>
+                    <canvas id="gaugeChart_{{ $test->id }}" width="200" height="120"></canvas>
                 </div>
             @endforeach
+        </div>
+
+        <div class="flex flex-col items-center my-4">
+            <div style="display: flex; width: 400px; height: 30px; border-radius: 4px; overflow: hidden;">
+                <div style="flex:1; background: #006400;"></div>
+                <div style="flex:1; background: #32CD32;"></div>
+                <div style="flex:1; background: #FFFF00;"></div>
+                <div style="flex:1; background: #FFA500;"></div>
+                <div style="flex:1; background: #FF0000;"></div>
+            </div>
+            <div style="display: flex; width: 400px; justify-content: space-between; font-size: 14px; margin-top: 2px;">
+                <span>0</span><span>20</span><span>40</span><span>60</span><span>80</span><span>100</span>
+            </div>
+            <div class="text-sm mt-1">Servis Hızı Barem Çubuğu (0-100 km/h)</div>
         </div>
 
         <div class="reference-table">
@@ -263,24 +289,44 @@
         document.addEventListener('DOMContentLoaded', function () {
             @foreach($student->tests as $test)
                 (function() {
-                    const avgSpeed = {{ number_format((($test->first_service_speed + $test->second_service_speed + $test->third_service_speed)/3), 2) }};
+                    const avgSpeed = {{ number_format((($test->first_service_speed + $test->second_service_speed + $test->third_service_speed)/3), 0) }};
                     const maxSpeed = 100;
-                    const ctx = document.getElementById('speedometerChart_{{ $test->id }}').getContext('2d');
+                    const startAngle = -135 * Math.PI / 180;
+                    const endAngle = 135 * Math.PI / 180;
+
+                    let displayValue = avgSpeed;
+                    if (displayValue > maxSpeed) displayValue = maxSpeed;
+                    const angle = startAngle + (endAngle - startAngle) * (displayValue / maxSpeed);
+
+                    const gaugeData = [
+                        maxSpeed * 0.2, // 0-10
+                        maxSpeed * 0.2, // 10-20
+                        maxSpeed * 0.2, // 20-30
+                        maxSpeed * 0.2, // 30-40
+                        maxSpeed * 0.2  // 40-50
+                    ];
+                    const gaugeColors = [
+                        '#2ecc40', // yeşil
+                        '#b6e651', // açık yeşil
+                        '#ffe066', // sarı
+                        '#ffae42', // turuncu
+                        '#ff4136'  // kırmızı
+                    ];
+
+                    const ctx = document.getElementById('gaugeChart_{{ $test->id }}').getContext('2d');
                     new Chart(ctx, {
                         type: 'doughnut',
                         data: {
                             datasets: [{
-                                data: [avgSpeed, maxSpeed - avgSpeed],
-                                backgroundColor: [
-                                    avgSpeed < 40 ? '#f44336' : avgSpeed < 60 ? '#ffeb3b' : '#4caf50',
-                                    '#e0e0e0'
-                                ],
-                                borderWidth: 0
+                                data: gaugeData,
+                                backgroundColor: gaugeColors,
+                                borderWidth: 0,
+                                cutout: '70%'
                             }]
                         },
                         options: {
-                            rotation: -90,
-                            circumference: 180,
+                            rotation: -135,
+                            circumference: 270,
                             cutout: '70%',
                             plugins: {
                                 legend: { display: false },
@@ -288,15 +334,48 @@
                             }
                         },
                         plugins: [{
-                            id: 'centerText',
+                            id: 'needle',
                             afterDraw: chart => {
-                                const {ctx, chartArea: {width, height}} = chart;
+                                const {ctx} = chart;
+                                const width = chart.width;
+                                const height = chart.height;
                                 ctx.save();
-                                ctx.font = 'bold 22px Segoe UI';
-                                ctx.fillStyle = '#333';
+
+                                const cx = width / 2;
+                                const cy = height * 0.9;
+                                const r = Math.min(width, height * 2) / 2.2 * 0.85;
+
+                                const maxSpeed = 100;
+                                const startAngle = -135 * Math.PI / 180;
+                                const endAngle = 135 * Math.PI / 180;
+
+                                let displayValue = avgSpeed;
+                                if (displayValue > maxSpeed) displayValue = maxSpeed;
+                                const angle = startAngle + (endAngle - startAngle) * (displayValue / maxSpeed);
+
+                                ctx.translate(cx, cy);
+                                ctx.rotate(angle);
+                                ctx.beginPath();
+                                ctx.moveTo(0, 0);
+                                ctx.lineTo(0, -r);
+                                ctx.lineWidth = 4;
+                                ctx.strokeStyle = '#222';
+                                ctx.stroke();
+                                ctx.rotate(-angle);
+                                ctx.translate(-cx, -cy);
+
+                                ctx.beginPath();
+                                ctx.arc(cx, cy, 8, 0, 2 * Math.PI);
+                                ctx.fillStyle = '#222';
+                                ctx.fill();
+
+                                ctx.font = 'bold 32px Segoe UI';
+                                ctx.fillStyle = '#222';
                                 ctx.textAlign = 'center';
                                 ctx.textBaseline = 'middle';
-                                ctx.fillText(avgSpeed + ' km/h', width / 2, height / 1.15);
+                                ctx.fillText(avgSpeed, cx, cy - r * 0.7);
+
+                                ctx.restore();
                             }
                         }]
                     });
