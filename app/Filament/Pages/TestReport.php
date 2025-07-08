@@ -340,14 +340,15 @@ class TestReport extends Page implements HasTable
                     ->color('success')
                     ->icon('heroicon-s-arrow-down-tray')
                     ->action(function (Student $record) {
-                        $pdf = Pdf::loadView('exports.testReportIndividual',
-                                                [   'student' => $record,
-                                                    'chartUrl' =>$this->indGeneratePieChart($record),
-                                                    'msg' => $this->getMsg($team=0, $record),
-                                                ]);
+                        $chartUrl = $this->indGenerateNewCharts($record);
+                        $pdf = Pdf::loadView('exports.testReportIndividualNew', [
+                            'student' => $record,
+                            'chartUrl' => $chartUrl,
+                            'msg' => $this->getMsg($team=0, $record),
+                        ]);
                         return response()->streamDownload(
                             fn () => print($pdf->output()),
-                            $record->getFullName().'.pdf'
+                            $record->getFullName().'-yeni.pdf'
                         );
                     }),
             ])
@@ -741,5 +742,269 @@ class TestReport extends Page implements HasTable
             ->value($col);
     }
 
+    private function indGenerateNewCharts($student): array
+    {
+        $labels = [];
+        $chartData = [];
+        $chartData2 = ['max' => [], 'avg' => []];
+        $chartConfig=[];
+        $chartConfig2=[];
+        if(count($student->tests)===1) {
+            $labels = ['1. Ölçüm', '2. Ölçüm', '3. Ölçüm'];
+
+        // Initialize arrays to hold the service speed values
+
+            $firstTest = $student->tests->first();
+            $datas = [
+                $firstTest?->first_service_speed,
+                $firstTest?->second_service_speed,
+                $firstTest?->third_service_speed,
+            ];
+
+            $chartData = $datas;
+
+//            $datas=[
+//                $student->tests->first()?->first_service_speed,
+//                $student->tests->first()?->second_service_speed,
+//                $student->tests->first()?->third_service_speed,
+//            ];
+//            $chartData=[
+//                $datas[0],
+//                $datas[1],
+//                $datas[2]
+//            ];
+
+            $chartData2['max'][] = max($datas);
+            $chartData2['avg'][] = round(array_sum($datas) / count($datas), 2);
+
+        }
+        else{
+//            $datas=[
+//                'highest' => [],
+//            ];
+//            $labels=[
+//                'term' => [],
+//            ];
+            foreach ($student->tests as $i=>$test) {
+                $labels[]='Test: '. $test->term; //$labels['term'][]
+                $speeds = [
+                    $test->first_service_speed,
+                    $test->second_service_speed,
+                    $test->third_service_speed,
+                ];
+
+                $chartData[] = max($speeds);
+                $chartData2['max'][] = max($speeds);
+                $chartData2['avg'][] = round(array_sum($speeds) / count($speeds), 2);
+
+                $chartConfig2[] = [
+                    'type' => 'gauge',
+                    'data' => [
+                        'labels' => ['20', '40', '60', '80', '100'],
+                        'datasets' => [
+                            [
+                                'data' => [20, 40, 60, 80, 100],
+                                'label' => 'Servis Hızı',
+                                'value' => $chartData2['avg'][$i],
+                                'min' => 0,
+                                'max' => 100,
+                                'backgroundColor' => ['#2ecc40', '#b6e651', '#ffe066', '#ffae42', '#ff4136' ],
+                                'borderColor' => 'rgba(255, 99, 132, 1)',
+                                'borderWidth' => 1,
+                                'pointStyle' => 'circle',
+                                'radius' => '100%',
+                                'datalabels' => [
+                                    'color' => 'white',
+                                    'font' => [
+                                        'family' => 'Arial',
+                                        'size' => 20,
+                                        'weight' => 'bold'
+                                    ],
+                                    'formatter' => function($value) {
+                                        return $value . ' km/h';
+                                    }
+                                ]
+                            ]
+                        ]
+                    ],
+                    'options' => [
+                        'responsive' => false,
+                        'needle' => [
+                            'radiusPercentage'=> 1,
+                            'widthPercentage'=> 1,
+                            'lengthPercentage'=> 60,
+                            'color'=> '#000',
+                        ],
+                        'valueLabel'=> [
+                            'fontSize'=> 20,
+                            'backgroundColor'=> 'transparent',
+                            'color'=> '#000',
+                        ],
+
+
+                        'plugins' => [
+                            'datalabels' => [
+                                'anchor' => 'end',
+                                'align' => 'top',
+                                'color' => '#000',
+                                'font' => [
+                                    'weight' => 'bold'
+                                ]
+                            ],
+                            'title' => [
+                                'display' => true,
+                                'text' => 'Servis Hızı'
+                            ]
+                        ],
+                        'scales' => [
+                            'y' => [
+                                'beginAtZero' => true,
+                                'min' => 0,
+                                'max' => 100,
+                                'ticks' => [
+                                    'precision' => 0,
+                                    'color' => 'black'
+                                ],
+                                'grid' => [
+                                    'color' => 'rgba(0, 0, 0, 0.2)'
+                                ]
+                            ]
+                        ]
+                    ]
+                ];
+
+            }
+            //dd(count($student->tests),$labels,$chartData);
+        }
+
+        // $chartConfig = [
+        //     'type' => 'bar',
+        //     'data' => [
+        //         'labels' => $labels,
+        //         'datasets' => [
+        //             [
+        //                 'label' => 'Ölçüm Sonucu',
+        //                 'backgroundColor' => 'rgba(75, 192, 192, 0.6)',
+        //                 'data' => $chartData2['max'],
+        //             ],
+        //             [
+        //                 'label' => 'Servis Hızı Ortalaması',
+        //                 'backgroundColor' => 'rgba(255, 206, 86, 0.6)',
+        //                 'data' => $chartData2['avg'],
+        //             ]
+        //         ]
+        //     ],
+        //     'options' => [
+        //         'responsive' => false,
+        //         'plugins' => [
+        //             'datalabels' => [
+        //                 'anchor' => 'end',
+        //                 'align' => 'top',
+        //                 'color' => '#000',
+        //                 'font' => [
+        //                     'weight' => 'bold'
+        //                 ]
+        //             ],
+        //             'title' => [
+        //                 'display' => true,
+        //                 'text' => 'Servis Hızı Karşılaştırması'
+        //             ]
+        //         ],
+        //         'scales' => [
+        //             'y' => [
+        //                 'beginAtZero' => true
+        //             ]
+        //         ]
+        //     ]
+        // ];
+
+
+        // $chartConfig2 = [
+        //     'type' => 'gauge',
+        //     'data' => [
+        //         'labels' => ['20', '40', '60', '80', '100'],
+        //         'datasets' => [
+        //             [
+        //                 'data' => [20, 40, 60, 80, 100],
+        //                 'label' => 'Servis Hızı',
+        //                 'value' => $chartData2['avg'][0],
+        //                 'min' => 0,
+        //                 'max' => 100,
+        //                 'backgroundColor' => ['#2ecc40', '#b6e651', '#ffe066', '#ffae42', '#ff4136' ],
+        //                 'borderColor' => 'rgba(255, 99, 132, 1)',
+        //                 'borderWidth' => 1,
+        //                 'pointStyle' => 'circle',
+        //                 'radius' => '100%',
+        //                 'datalabels' => [
+        //                     'color' => 'white',
+        //                     'font' => [
+        //                         'family' => 'Arial',
+        //                         'size' => 20,
+        //                         'weight' => 'bold'
+        //                     ],
+        //                     'formatter' => function($value) {
+        //                         return $value . ' km/h';
+        //                     }
+        //                 ]
+        //             ]
+        //         ]
+        //     ],
+        //     'options' => [
+        //         'responsive' => false,
+        //         'needle' => [
+        //             'radiusPercentage'=> 1,
+        //             'widthPercentage'=> 1,
+        //             'lengthPercentage'=> 60,
+        //             'color'=> '#000',
+        //         ],
+        //         'valueLabel'=> [
+        //             'fontSize'=> 20,
+        //             'backgroundColor'=> 'transparent',
+        //             'color'=> '#000',
+        //         ],
+
+
+        //         'plugins' => [
+        //             'datalabels' => [
+        //                 'anchor' => 'end',
+        //                 'align' => 'top',
+        //                 'color' => '#000',
+        //                 'font' => [
+        //                     'weight' => 'bold'
+        //                 ]
+        //             ],
+        //             'title' => [
+        //                 'display' => true,
+        //                 'text' => 'Servis Hızı'
+        //             ]
+        //         ],
+        //         'scales' => [
+        //             'y' => [
+        //                 'beginAtZero' => true,
+        //                 'min' => 0,
+        //                 'max' => 100,
+        //                 'ticks' => [
+        //                     'precision' => 0,
+        //                     'color' => 'black'
+        //                 ],
+        //                 'grid' => [
+        //                     'color' => 'rgba(0, 0, 0, 0.2)'
+        //                 ]
+        //             ]
+        //         ]
+        //     ]
+        // ];
+
+        // $chartUrl1 = 'https://quickchart.io/chart?c=' . urlencode(json_encode($chartConfig) );
+        $chartUrl2 = [];
+        foreach ($chartConfig2 as $i=>$config2) {
+            $chartUrl2[] = 'https://quickchart.io/chart?c=' . urlencode(json_encode($config2));
+
+        }
+        return [
+            'gauge' => $chartUrl2,
+
+        ];
+    }
 
 }
