@@ -139,42 +139,42 @@
             </tr>
             </thead>
             <tbody>
-            <tr >
-                <td>14 Yaş Altı Kızlar</td>
-                <td>34 - 42</td>
-                <td>43 - 63</td>
-                <td>63 - 72</td>
-                <td>72</td>
-            </tr>
-            <tr >
-                <td>15-16 Yaş Kızlar</td>
-                <td>40	48</td>
-                <td>49	67</td>
-                <td>68	76</td>
-                <td>76</td>
-            </tr>
-            <tr >
-                <td>17-18 Yaş Kızlar</td>
-                <td>49	55</td>
-                <td>56	71</td>
-                <td>72	79</td>
-                <td>79</td>
-            </tr >
-            <tr >
-                <td>19-25 Yaş Kızlar</td>
-                <td>52	58</td>
-                <td>59	72</td>
-                <td>73	79</td>
-                <td>79</td>
-            </tr>
-            <tr>
-                <td>Genç Kadınlar</td>
-                <td>58	63</td>
-                <td>64	75</td>
-                <td>76	80</td>
-                <td>80</td>
-            </tr>
-            </tbody>
+                <tr >
+                    <td>14 Yaş Altı Kızlar</td>
+                    <td>34 - 42</td>
+                    <td>43 - 62</td>
+                    <td>63 - 72</td>
+                    <td>73 ve üzeri</td>
+                </tr>
+                <tr >
+                    <td>15-16 Yaş Kızlar</td>
+                    <td>40 - 48</td>
+                    <td>49 - 66</td>
+                    <td>67 - 76</td>
+                    <td>77 ve üzeri</td>
+                </tr>
+                <tr >
+                    <td>17-18 Yaş Kızlar</td>
+                    <td>49 - 55</td>
+                    <td>56 - 70</td>
+                    <td>71 -  79</td>
+                    <td>80 ve üzeri</td>
+                </tr >
+                <tr >
+                    <td>19-25 Yaş Kızlar</td>
+                    <td>52 -58</td>
+                    <td>59 - 71</td>
+                    <td>72 - 80</td>
+                    <td>81 ve üzeri</td>
+                </tr>
+                <tr>
+                    <td>Genç Kadınlar</td>
+                    <td>58 - 63</td>
+                    <td>64 - 74</td>
+                    <td>75 - 85</td>
+                    <td>86 ve üzeri</td>
+                </tr>
+                </tbody>
         </table>
         <br><br><br><br><br><br><br>
         <h5>Profesyonel Sporcuların Servis Hızı</h5>
