@@ -307,20 +307,36 @@ class TestReport extends Page implements HasTable
             ])
 
             ->actions([
-                Tables\Actions\Action::make('view')
-                    ->label('Görüntüle')
-                    ->color('primary')
-                    ->icon('heroicon-o-eye')
-                    ->url(fn (Student $record) => route('reports.individual', $record))
-                    ->openUrlInNewTab(),
+                // Tables\Actions\Action::make('view')
+                //     ->label('Eski')
+                //     ->color('primary')
+                //     ->icon('heroicon-o-eye')
+                //     ->url(fn (Student $record) => route('reports.individual', $record))
+                //     ->openUrlInNewTab(),
                 Tables\Actions\Action::make('new_view')
-                    ->label('Yeni')
+                    ->label('Görüntüle')
                     ->color('warning')
                     ->icon('heroicon-o-document-text')
                     ->url(fn (Student $record) => route('reports.individual.new', $record))
                     ->openUrlInNewTab(),
                 Tables\Actions\Action::make('pdf')
                     ->label('PDF')
+                    ->color('success')
+                    ->icon('heroicon-s-arrow-down-tray')
+                    ->action(function (Student $record) {
+                        $pdf = Pdf::loadView('exports.testReportIndividual',
+                                                [   'student' => $record,
+                                                    'chartUrl' =>$this->indGeneratePieChart($record),
+                                                    'msg' => $this->getMsg($team=0, $record),
+                                                ]);
+                        return response()->streamDownload(
+                            fn () => print($pdf->output()),
+                            $record->getFullName().'.pdf'
+                        );
+                    }),
+
+                    Tables\Actions\Action::make('pdf-new')
+                    ->label('PDF-new')
                     ->color('success')
                     ->icon('heroicon-s-arrow-down-tray')
                     ->action(function (Student $record) {

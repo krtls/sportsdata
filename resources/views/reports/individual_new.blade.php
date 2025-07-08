@@ -164,8 +164,8 @@
         .two-column-layout {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 40px;
-            margin: 40px 0;
+            gap: 20px;
+            margin: 10px 0;
         }
 
         .left-column {
@@ -221,6 +221,11 @@
                 flex-basis: 100%;
                 max-width: 100%;
             }
+        }
+        .img-center {
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
     </style>
 </head>
@@ -329,12 +334,9 @@
                         @endforeach
                     </tbody>
                 </table>
-                
+
             </div>
             <div class="right-column">
-
-
-
 
 
                 <div class="reference-table">
@@ -388,6 +390,11 @@
                         </tbody>
                     </table>
                 </div>
+
+<div class="img-center">
+    <img src="{{ asset('storage/images/prosSpeed.png') }}"
+    style="" alt="ProsSpeed">
+</div>
 
                 <div class="assessment">
                     <h3>Bireysel Performans Değerlendirmesi</h3>
