@@ -319,24 +319,24 @@ class TestReport extends Page implements HasTable
                     ->icon('heroicon-o-document-text')
                     ->url(fn (Student $record) => route('reports.individual.new', $record))
                     ->openUrlInNewTab(),
-                Tables\Actions\Action::make('pdf')
-                    ->label('PDF')
-                    ->color('success')
-                    ->icon('heroicon-s-arrow-down-tray')
-                    ->action(function (Student $record) {
-                        $pdf = Pdf::loadView('exports.testReportIndividual',
-                                                [   'student' => $record,
-                                                    'chartUrl' =>$this->indGeneratePieChart($record),
-                                                    'msg' => $this->getMsg($team=0, $record),
-                                                ]);
-                        return response()->streamDownload(
-                            fn () => print($pdf->output()),
-                            $record->getFullName().'.pdf'
-                        );
-                    }),
+                // Tables\Actions\Action::make('pdf')
+                //     ->label('PDF')
+                //     ->color('success')
+                //     ->icon('heroicon-s-arrow-down-tray')
+                //     ->action(function (Student $record) {
+                //         $pdf = Pdf::loadView('exports.testReportIndividual',
+                //                                 [   'student' => $record,
+                //                                     'chartUrl' =>$this->indGeneratePieChart($record),
+                //                                     'msg' => $this->getMsg($team=0, $record),
+                //                                 ]);
+                //         return response()->streamDownload(
+                //             fn () => print($pdf->output()),
+                //             $record->getFullName().'.pdf'
+                //         );
+                //     }),
 
                     Tables\Actions\Action::make('pdf-new')
-                    ->label('PDF-new')
+                    ->label('PDF')
                     ->color('success')
                     ->icon('heroicon-s-arrow-down-tray')
                     ->action(function (Student $record) {
@@ -736,10 +736,15 @@ class TestReport extends Page implements HasTable
         else
             $col='34-38';
 
-        return TestAssesment::query()
-            ->where('for_whom', $forWhom)
-            ->where('age_group', $this->ageGroup)
-            ->value($col);
+        // return TestAssesment::query()
+        //     ->where('for_whom', $forWhom)
+        //     ->where('age_group', $this->ageGroup)
+        //     ->value($col);
+
+        return "Lorem ipsum nasıl yapılır?
+HTML Seçenekleri (isteğe bağlı): Eğer metnin içeriğine HTML etiketleri eklemek istiyorsanız, bu seçenekleri işaretleyin. Örneğin, <p> (paragraf), <i> (italik) veya <strong> (kalın) gibi etiketler kullanabilirsiniz. Metni Oluştur: “Oluştur” veya benzeri bir düğmeye tıklayarak Lorem Ipsum metnini üretin.
+Lorem ipsum nasıl yapılır?
+HTML Seçenekleri (isteğe bağlı): Eğer metnin içeriğine HTML etiketleri eklemek istiyorsanız, bu seçenekleri işaretleyin. Örneğin, <p> (paragraf), <i> (italik) veya <strong> (kalın) gibi etiketler kullanabilirsiniz. Metni Oluştur: “Oluştur” veya benzeri bir düğmeye tıklayarak Lorem Ipsum metnini üretin. ";
     }
 
     private function indGenerateNewCharts($student): array
@@ -877,6 +882,92 @@ class TestReport extends Page implements HasTable
             //dd(count($student->tests),$labels,$chartData);
         }
 
+        $lastTests=$student->tests()->latest()->first();
+        $lastTestDatas = [
+            $lastTests?->first_service_speed,
+            $lastTests?->second_service_speed,
+            $lastTests?->third_service_speed,
+        ];
+
+        foreach ($lastTestDatas as $i=>$lastTestData) {
+            
+            $chartConfig[] = [
+                'type' => 'gauge',
+                'data' => [
+                    'labels' => ['20', '40', '60', '80', '100'],
+                    'datasets' => [
+                        [
+                            'data' => [20, 40, 60, 80, 100],
+                            'label' => 'Servis Hızı',
+                            'value' => $lastTestData,
+                            'min' => 0,
+                            'max' => 100,
+                            'backgroundColor' => ['#2ecc40', '#b6e651', '#ffe066', '#ffae42', '#ff4136' ],
+                            'borderColor' => 'rgba(255, 99, 132, 1)',
+                            'borderWidth' => 1,
+                            'pointStyle' => 'circle',
+                            'radius' => '100%',
+                            'datalabels' => [
+                                'color' => 'white',
+                                'font' => [
+                                    'family' => 'Arial',
+                                    'size' => 20,
+                                    'weight' => 'bold'
+                                ],
+                                'formatter' => function($value) {
+                                    return $value . ' km/h';
+                                }
+                            ]
+                        ]
+                    ]
+                ],
+                'options' => [
+                    'responsive' => false,
+                    'needle' => [
+                        'radiusPercentage'=> 1,
+                        'widthPercentage'=> 1,
+                        'lengthPercentage'=> 60,
+                        'color'=> '#000',
+                    ],
+                    'valueLabel'=> [
+                        'fontSize'=> 30,
+                        'backgroundColor'=> 'transparent',
+                        'color'=> '#fff',
+                    ],
+
+
+                    'plugins' => [
+                        'datalabels' => [
+                            'anchor' => 'end',
+                            'align' => 'top',
+                            'color' => '#fff',
+                            'font' => [
+                                'weight' => 'bold'
+                            ]
+                        ],
+                        'title' => [
+                            'display' => true,
+                            'text' => 'Servis Hızı'
+                        ]
+                    ],
+                    'scales' => [
+                        'y' => [
+                            'beginAtZero' => true,
+                            'min' => 0,
+                            'max' => 100,
+                            'ticks' => [
+                                'precision' => 0,
+                                'color' => 'white'
+                            ],
+                            'grid' => [
+                                'color' => 'rgba(0, 0, 0, 0.2)'
+                            ]
+                        ]
+                    ]
+                ]
+            ];
+
+        }
         // $chartConfig = [
         //     'type' => 'bar',
         //     'data' => [
@@ -996,6 +1087,12 @@ class TestReport extends Page implements HasTable
         // ];
 
         // $chartUrl1 = 'https://quickchart.io/chart?c=' . urlencode(json_encode($chartConfig) );
+        $chartUrl = [];
+        foreach ($chartConfig as $i=>$config) {
+            $chartUrl[] = 'https://quickchart.io/chart?c=' . urlencode(json_encode($config));
+
+        }
+       
         $chartUrl2 = [];
         foreach ($chartConfig2 as $i=>$config2) {
             $chartUrl2[] = 'https://quickchart.io/chart?c=' . urlencode(json_encode($config2));
@@ -1003,7 +1100,7 @@ class TestReport extends Page implements HasTable
         }
         return [
             'gauge' => $chartUrl2,
-
+            'lastGauge' => $chartUrl,
         ];
     }
 

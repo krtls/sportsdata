@@ -88,7 +88,23 @@
             <p><strong>Kulüp:</strong> {{ $student->club->name ?? '-' }}</p>
         </div>
 
-        <img src="{{ asset('storage/images/voleybol_saha.png') }}" alt="Voleybol Sahası" style="width: 90%; margin-bottom: 10px;"/>
+        <div style="position: relative;">
+            <img src="{{ asset('storage/images/voleybol_saha.png') }}" alt="Voleybol Sahası" style="width: 90%; margin-bottom: 10px;"/>
+            
+            {{-- Speedometer chart'ları voleybol sahasındaki 5, 6 ve 1 nolu bölgeler üzerinde --}}
+            @php
+                // Voleybol sahasındaki bölge pozisyonları (tahmini)
+                $x = [160, 210, 260]; // 5, 6, 1 nolu bölgelerin x koordinatları
+                $y = [140, 105, 70]; // 5, 6, 1 nolu bölgelerin y koordinatları
+            @endphp
+            @foreach($chartUrl['lastGauge'] as $i => $lastGaugeUrl)
+            <div style="position: absolute; left: {{ $x[$i] }}px; top: {{ $y[$i] }}px; text-align: center;">
+                <img src="{{ $lastGaugeUrl }}" alt="Servis Hızı" style="width: 30px; height: 20px; margin-bottom: 1px;" />
+            </div>
+            @endforeach
+        </div>
+
+
         {{-- <img src="{{ $chartUrl['gauge'] }}" alt="Servis Hızı" style="width: 90%; margin-bottom: 10px;"/> --}}
 
         {{-- @foreach($chartUrl['gauge'] as $gaugeUrl)
