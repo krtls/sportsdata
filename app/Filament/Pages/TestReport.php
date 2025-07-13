@@ -736,16 +736,17 @@ class TestReport extends Page implements HasTable
         else
             $col='34-38';
 
-        // return TestAssesment::query()
-        //     ->where('for_whom', $forWhom)
-        //     ->where('age_group', $this->ageGroup)
-        //     ->value($col);
+        return TestAssesment::query()
+            ->where('for_whom', $forWhom)
+            ->where('age_group', $this->ageGroup)
+            ->value($col);
 
-        return "Lorem ipsum nasıl yapılır?
-HTML Seçenekleri (isteğe bağlı): Eğer metnin içeriğine HTML etiketleri eklemek istiyorsanız, bu seçenekleri işaretleyin. Örneğin, <p> (paragraf), <i> (italik) veya <strong> (kalın) gibi etiketler kullanabilirsiniz. Metni Oluştur: “Oluştur” veya benzeri bir düğmeye tıklayarak Lorem Ipsum metnini üretin.
-Lorem ipsum nasıl yapılır?
-HTML Seçenekleri (isteğe bağlı): Eğer metnin içeriğine HTML etiketleri eklemek istiyorsanız, bu seçenekleri işaretleyin. Örneğin, <p> (paragraf), <i> (italik) veya <strong> (kalın) gibi etiketler kullanabilirsiniz. Metni Oluştur: “Oluştur” veya benzeri bir düğmeye tıklayarak Lorem Ipsum metnini üretin. ";
-    }
+//         return "Lorem ipsum nasıl yapılır?
+// HTML Seçenekleri (isteğe bağlı): Eğer metnin içeriğine HTML etiketleri eklemek istiyorsanız, bu seçenekleri işaretleyin. Örneğin, <p> (paragraf), <i> (italik) veya <strong> (kalın) gibi etiketler kullanabilirsiniz. Metni Oluştur: “Oluştur” veya benzeri bir düğmeye tıklayarak Lorem Ipsum metnini üretin.
+// Lorem ipsum nasıl yapılır?
+// HTML Seçenekleri (isteğe bağlı): Eğer metnin içeriğine HTML etiketleri eklemek istiyorsanız, bu seçenekleri işaretleyin. Örneğin, <p> (paragraf), <i> (italik) veya <strong> (kalın) gibi etiketler kullanabilirsiniz. Metni Oluştur: “Oluştur” veya benzeri bir düğmeye tıklayarak Lorem Ipsum metnini üretin. ";
+    
+// }
 
     private function indGenerateNewCharts($student): array
     {
