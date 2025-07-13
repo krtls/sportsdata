@@ -6,29 +6,36 @@
     <title>Bireysel Test Raporu - {{ $student->getFullName() }}</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
+        @page {
+            margin: 20px;
+            size: A4;
+        }
+        
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
-            padding: 20px;
+            padding: 0;
             background-color: #f5f5f5;
         }
         .container {
-            max-width: 1200px;
-            margin: 0 auto;
+            max-width: 100%;
+            margin: 0;
             background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            padding: 20px;
+            border-radius: 0;
+            box-shadow: none;
+            page-break-inside: avoid;
         }
         .header {
             display: flex;
             align-items: center;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             border-bottom: 2px solid #e0e0e0;
-            padding-bottom: 20px;
+            padding-bottom: 15px;
+            page-break-inside: avoid;
         }
         .logo {
-            height: 120px;
+            height: 100px;
             margin-right: 20px;
         }
         .header h1 {
@@ -38,9 +45,10 @@
         }
         .student-info {
             background: #f8f9fa;
-            padding: 20px;
+            padding: 15px;
             border-radius: 8px;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
+            page-break-inside: avoid;
         }
         .student-info p {
             margin: 5px 0;
@@ -57,6 +65,7 @@
             border-radius: 8px;
             overflow: hidden;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            page-break-inside: avoid;
         }
         th, td {
             padding: 12px;
@@ -78,14 +87,16 @@
         .charts-container {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            margin: 30px 0;
+            gap: 20px;
+            margin: 20px 0;
+            page-break-inside: avoid;
         }
         .chart-wrapper {
             background: white;
-            padding: 20px;
+            padding: 15px;
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            page-break-inside: avoid;
         }
         .chart-title {
             text-align: center;
@@ -96,9 +107,10 @@
         }
         .reference-table {
             background: #f8f9fa;
-            padding: 20px;
+            padding: 15px;
             border-radius: 8px;
-            margin: 30px 0;
+            margin: 20px 0;
+            page-break-inside: avoid;
         }
         .reference-table h3 {
             margin-top: 0;
@@ -106,10 +118,11 @@
         }
         .assessment {
             background: #e3f2fd;
-            padding: 20px;
+            padding: 15px;
             border-radius: 8px;
-            margin: 30px 0;
+            margin: 20px 0;
             border-left: 4px solid #2196f3;
+            page-break-inside: avoid;
         }
         .assessment h3 {
             margin-top: 0;
@@ -141,10 +154,32 @@
                 padding: 15px;
             }
         }
+        
+        /* DOMPDF specific styles */
+        .no-break {
+            page-break-inside: avoid;
+        }
+        
+        /* Ensure content fits on one page */
+        .container {
+            max-height: 100vh;
+            overflow: hidden;
+        }
+        
+        /* Reduce spacing for PDF */
+        .header {
+            margin-bottom: 15px !important;
+            padding-bottom: 10px !important;
+        }
+        
+        .student-info {
+            margin-bottom: 15px !important;
+            padding: 10px !important;
+        }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="container no-break">
         <div class="header">
             <img src="{{ asset('images/logo.jpeg') }}" alt="Logo" class="logo">
             <h1>Sportif Performans Bireysel Gelişim Raporu</h1>

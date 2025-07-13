@@ -128,9 +128,9 @@ class TestReport extends Page implements HasTable
 //                        return implode('<br>', $terms);         // Alt alta yazmak için <br> etiketini kullan
 //                    })
 //                    ->html(), // HTML etiketlerinin işlenmesini sağlar,
-                TextColumn::make('tests.first_service_speed')->label('1. Servis Hızı'),
-                TextColumn::make('tests.second_service_speed')->label('2. Servis Hızı'),
-                TextColumn::make('tests.third_service_speed')->label('3. Servis Hızı'),
+                TextColumn::make('tests.first_service_speed')->label('5. Bölge'),
+                TextColumn::make('tests.second_service_speed')->label('6. Bölge'),
+                TextColumn::make('tests.third_service_speed')->label('1. Bölge'),
 
                 Tables\Columns\TextColumn::make('best')
                     ->label('En İyi Servis Hızı')
@@ -285,10 +285,10 @@ class TestReport extends Page implements HasTable
                         $zip = new ZipArchive;
                         if ($zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) === TRUE) {
                             foreach ($records as $record) {
-
-                                $pdf = Pdf::loadView('exports.testReportIndividual',
+                                $chartUrl = $this->indGenerateNewCharts($record);
+                                $pdf = Pdf::loadView('exports.testReportIndividualNew',
                                                 [   'student' => $record,
-                                                    'chartUrl' => $this->indGeneratePieChart($record),
+                                                    'chartUrl' => $chartUrl,
                                                     'msg' => $this->getMsg($team=0, $record),
                                                 ]);
                                 $pdfContent = $pdf->output();
@@ -754,36 +754,37 @@ HTML Seçenekleri (isteğe bağlı): Eğer metnin içeriğine HTML etiketleri ek
         $chartData2 = ['max' => [], 'avg' => []];
         $chartConfig=[];
         $chartConfig2=[];
-        if(count($student->tests)===1) {
-            $labels = ['1. Ölçüm', '2. Ölçüm', '3. Ölçüm'];
 
-        // Initialize arrays to hold the service speed values
+//         if(count($student->tests)===1) {
+//             $labels = ['1. Ölçüm', '2. Ölçüm', '3. Ölçüm'];
 
-            $firstTest = $student->tests->first();
-            $datas = [
-                $firstTest?->first_service_speed,
-                $firstTest?->second_service_speed,
-                $firstTest?->third_service_speed,
-            ];
+//         // Initialize arrays to hold the service speed values
 
-            $chartData = $datas;
+//             $firstTest = $student->tests->first();
+//             $datas = [
+//                 $firstTest?->first_service_speed,
+//                 $firstTest?->second_service_speed,
+//                 $firstTest?->third_service_speed,
+//             ];
 
-//            $datas=[
-//                $student->tests->first()?->first_service_speed,
-//                $student->tests->first()?->second_service_speed,
-//                $student->tests->first()?->third_service_speed,
-//            ];
-//            $chartData=[
-//                $datas[0],
-//                $datas[1],
-//                $datas[2]
-//            ];
+//             $chartData = $datas;
 
-            $chartData2['max'][] = max($datas);
-            $chartData2['avg'][] = round(array_sum($datas) / count($datas), 2);
+// //            $datas=[
+// //                $student->tests->first()?->first_service_speed,
+// //                $student->tests->first()?->second_service_speed,
+// //                $student->tests->first()?->third_service_speed,
+// //            ];
+// //            $chartData=[
+// //                $datas[0],
+// //                $datas[1],
+// //                $datas[2]
+// //            ];
 
-        }
-        else{
+//             $chartData2['max'][] = max($datas);
+//             $chartData2['avg'][] = round(array_sum($datas) / count($datas), 2);
+
+//         }
+//         else{
 //            $datas=[
 //                'highest' => [],
 //            ];
@@ -819,10 +820,10 @@ HTML Seçenekleri (isteğe bağlı): Eğer metnin içeriğine HTML etiketleri ek
                                 'pointStyle' => 'circle',
                                 'radius' => '100%',
                                 'datalabels' => [
-                                    'color' => 'white',
+                                    'color' => 'black',
                                     'font' => [
                                         'family' => 'Arial',
-                                        'size' => 20,
+                                        'size' => 30,
                                         'weight' => 'bold'
                                     ],
                                     'formatter' => function($value) {
@@ -834,6 +835,12 @@ HTML Seçenekleri (isteğe bağlı): Eğer metnin içeriğine HTML etiketleri ek
                     ],
                     'options' => [
                         'responsive' => false,
+                        'layout' => [
+                            'padding' => [
+                                'top' => 30,
+                                'right' => 20,
+                            ]
+                        ],
                         'needle' => [
                             'radiusPercentage'=> 1,
                             'widthPercentage'=> 1,
@@ -880,7 +887,7 @@ HTML Seçenekleri (isteğe bağlı): Eğer metnin içeriğine HTML etiketleri ek
 
             }
             //dd(count($student->tests),$labels,$chartData);
-        }
+        // }
 
         $lastTests=$student->tests()->latest()->first();
         $lastTestDatas = [
@@ -908,10 +915,10 @@ HTML Seçenekleri (isteğe bağlı): Eğer metnin içeriğine HTML etiketleri ek
                             'pointStyle' => 'circle',
                             'radius' => '100%',
                             'datalabels' => [
-                                'color' => 'white',
+                                'color' => 'black',
                                 'font' => [
                                     'family' => 'Arial',
-                                    'size' => 20,
+                                    'size' => 40,
                                     'weight' => 'bold'
                                 ],
                                 'formatter' => function($value) {
@@ -923,18 +930,24 @@ HTML Seçenekleri (isteğe bağlı): Eğer metnin içeriğine HTML etiketleri ek
                 ],
                 'options' => [
                     'responsive' => false,
+                    'layout' => [
+                        'padding' => [
+                            'top' => 30,
+                            'right' => 20,
+
+                        ]
+                    ],
                     'needle' => [
                         'radiusPercentage'=> 1,
-                        'widthPercentage'=> 1,
+                        'widthPercentage'=> 2,
                         'lengthPercentage'=> 60,
                         'color'=> '#000',
                     ],
                     'valueLabel'=> [
-                        'fontSize'=> 30,
+                        'fontSize'=> 80,
                         'backgroundColor'=> 'transparent',
                         'color'=> '#fff',
                     ],
-
 
                     'plugins' => [
                         'datalabels' => [
@@ -960,7 +973,7 @@ HTML Seçenekleri (isteğe bağlı): Eğer metnin içeriğine HTML etiketleri ek
                                 'color' => 'white'
                             ],
                             'grid' => [
-                                'color' => 'rgba(0, 0, 0, 0.2)'
+                                'color' => 'rgba(255, 255, 255, 0.2)'
                             ]
                         ]
                     ]
@@ -1088,13 +1101,13 @@ HTML Seçenekleri (isteğe bağlı): Eğer metnin içeriğine HTML etiketleri ek
 
         // $chartUrl1 = 'https://quickchart.io/chart?c=' . urlencode(json_encode($chartConfig) );
         $chartUrl = [];
-        foreach ($chartConfig as $i=>$config) {
+        foreach ($chartConfig as $config) {
             $chartUrl[] = 'https://quickchart.io/chart?c=' . urlencode(json_encode($config));
 
         }
        
         $chartUrl2 = [];
-        foreach ($chartConfig2 as $i=>$config2) {
+        foreach ($chartConfig2 as $config2) {
             $chartUrl2[] = 'https://quickchart.io/chart?c=' . urlencode(json_encode($config2));
 
         }

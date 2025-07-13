@@ -577,25 +577,28 @@
 
                             let displayValue = value;
                             if (displayValue > maxSpeed) displayValue = maxSpeed;
-                            const angle = Math.PI * (1 - displayValue / maxSpeed);
+                            
+                            const startAngle = Math.PI; // left (180°)
+                            const endAngle = 0;         // right (0°)
+                            const angle = startAngle + (endAngle - startAngle) * (displayValue / maxSpeed)+30;
 
                             ctx.translate(cx, cy);
                             ctx.rotate(-angle);
                             ctx.beginPath();
                             ctx.moveTo(0, 0);
                             ctx.lineTo(0, -r);
-                            ctx.lineWidth = 3;
+                            ctx.lineWidth = 1;
                             ctx.strokeStyle = '#222';
                             ctx.stroke();
                             ctx.rotate(angle);
                             ctx.translate(-cx, -cy);
 
                             ctx.beginPath();
-                            ctx.arc(cx, cy, 6, 0, 2 * Math.PI);
+                            ctx.arc(cx, cy, 2, 0, 2 * Math.PI);
                             ctx.fillStyle = '#222';
                             ctx.fill();
 
-                            ctx.font = 'bold 14px Segoe UI';
+                            ctx.font = 'bold 8px Segoe UI';
                             ctx.fillStyle = '#222';
                             ctx.textAlign = 'center';
                             ctx.textBaseline = 'middle';

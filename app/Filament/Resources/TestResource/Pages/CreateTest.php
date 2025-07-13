@@ -47,19 +47,19 @@ class CreateTest extends CreateRecord
                     ->required(),
 
                 TextInput::make('first_service_speed')
-                    ->label('1. Servis Hızı')
+                    ->label('5. Bölge')
                     ->numeric()
                     ->mask('99')
                     ->maxLength(2),
 
                 TextInput::make('second_service_speed')
-                    ->label('2. Servis Hızı')
+                    ->label('6. Bölge')
                     ->numeric()
                     ->mask('99')
                     ->maxLength(2),
 
                 TextInput::make('third_service_speed')
-                    ->label('3. Servis Hızı')
+                    ->label('1. Bölge')
                     ->numeric()
                     ->mask('99')
                     ->maxLength(2),

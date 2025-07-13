@@ -3,7 +3,10 @@
 <head>
     <title>Bireysel Test Raporu</title>
     <style>
-        @page {}
+        @page {
+            margin: 15px;
+            size: A4;
+        }
         body {
             font-family: DejaVu Sans, sans-serif;
             margin: 0;
@@ -68,34 +71,67 @@
         p, .message {
             line-height: 1.4;
         }
+        
+        /* DOMPDF page break control */
+        .no-break {
+            page-break-inside: avoid;
+        }
+        
+        /* Prevent unwanted page breaks */
+        table {
+            page-break-inside: avoid;
+        }
+        
+        .student-info {
+            page-break-inside: avoid;
+            margin-bottom: 15px;
+            padding: 8px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+        }
+        
+        /* Reduce spacing for better fit */
+        .bar-scale {
+            margin: 10px 0 2px 0;
+        }
+        
+        h5 {
+            margin-top: 15px !important;
+            margin-bottom: 8px !important;
+        }
+        
+        /* Ensure content fits on one page */
+        body {
+            max-height: 100vh;
+        }
     </style>
 </head>
 <body>
-<div style="font-size: 0;">
-    <img src="{{ asset('storage/images/logo.jpeg') }}" style="display: inline-block; vertical-align: middle; height: 60px; width: 184px; margin-left: 10px;">
-    <h2 style="display: inline-block; vertical-align: middle; margin: 0; font-size: 18px;">
+<div style="font-size: 0;" class="no-break">
+    <img src="{{ asset('storage/images/logo.jpeg') }}" style="display: inline-block; vertical-align: middle; height: 50px; width: 150px; margin-left: 10px;">
+    <h2 style="display: inline-block; vertical-align: middle; margin: 0; font-size: 16px;">
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Sportif Performans Bireysel Gelişim Raporu
     </h2>
 </div>
-<br>
-<table width="100%">
+
+<table width="100%" class="no-break">
   <tr>
     <td style="width:50%; vertical-align:top; padding-right:10px;">
       <!-- Sol sütun içeriği (öğrenci info, grafikler, tablo vs) -->
-        <div class="student-info">
+        <div class="student-info no-break" style="margin-bottom: 15px;">
             <p><strong>Öğrenci:</strong> {{ $student->getFullName() }}</p>
             <p><strong>Yaş:</strong> {{ $student->age }} &nbsp;&nbsp; <strong>Cinsiyet:</strong> {{ $student->gender }}</p>
             <p><strong>Kulüp:</strong> {{ $student->club->name ?? '-' }}</p>
         </div>
-
-        <div style="position: relative;">
-            <img src="{{ asset('storage/images/voleybol_saha.png') }}" alt="Voleybol Sahası" style="width: 90%; margin-bottom: 10px;"/>
+        <br><br>
+        <div style="position: relative; margin-top: 10px; clear: both;" class="no-break">
+            <img src="{{ asset('storage/images/voleybol_saha.png') }}" alt="Voleybol Sahası" style="width: 85%; margin-bottom: 8px; display: block;"/>
             
             {{-- Speedometer chart'ları voleybol sahasındaki 5, 6 ve 1 nolu bölgeler üzerinde --}}
             @php
                 // Voleybol sahasındaki bölge pozisyonları (tahmini)
-                $x = [160, 210, 260]; // 5, 6, 1 nolu bölgelerin x koordinatları
-                $y = [140, 105, 70]; // 5, 6, 1 nolu bölgelerin y koordinatları
+                $x = [170, 230, 280]; // 5, 6, 1 nolu bölgelerin x koordinatları
+                $y = [140, 105, 75]; // 5, 6, 1 nolu bölgelerin y koordinatları
             @endphp
             @foreach($chartUrl['lastGauge'] as $i => $lastGaugeUrl)
             <div style="position: absolute; left: {{ $x[$i] }}px; top: {{ $y[$i] }}px; text-align: center;">
@@ -112,18 +148,18 @@
             <div style="font-weight: bold; margin-bottom: 2px;">
                 {{ $loop->iteration }}. Test Dönemi
             </div>
-            <img src="{{ $gaugeUrl }}" alt="Servis Hızı" style="width: 45%; margin-bottom: 5px;" />
+            <img src="{{ $gaugeUrl }}" alt="Servis Hızı" style="width: 100%; margin-bottom: 5px;" />
         </div>
         @endforeach --}}
 
-        <table width="100%" style="border-collapse: collapse;">
+        <table width="100%" style="border-collapse: collapse;" class="no-break">
             <tr>
             @foreach($chartUrl['gauge'] as $i => $gaugeUrl)
                 <td style="width:50%; text-align: center; vertical-align: top; padding-bottom: 12px;">
                     <div style="font-weight: bold; margin-bottom: 2px;">
                         {{ $i + 1 }}. Test Dönemi
                     </div>
-                    <img src="{{ $gaugeUrl }}" alt="Servis Hızı" style="width: 90%; margin-bottom: 5px;" />
+                    <img src="{{ $gaugeUrl }}" alt="Servis Hızı" style="width: 90%; margin-bottom: 5px; " />
                 </td>
                 @if(($i+1) % 2 == 0 && $i+1 < count($chartUrl['gauge']))
             </tr><tr>
@@ -135,9 +171,9 @@
             </tr>
         </table>
 
-        <img src="{{ asset('storage/images/service_bar.png') }}" alt="Servis Hızı Barem Çubuğu" style="display: block; margin: 0 auto 10px auto; max-width: 320px; width: 100%;" />
+        <img src="{{ asset('storage/images/service_bar.png') }}" alt="Servis Hızı Barem Çubuğu" style="display: block; margin: 0 auto 8px auto; max-width: 280px; width: 100%;" />
 
-        <table style="margin-bottom: 16px;">
+        <table style="margin-bottom: 12px;" class="no-break">
             <caption>Voleybol Servis Hızı Gelişim Tablosu</caption>
             <thead>
             <tr>
@@ -160,7 +196,7 @@
     </td>
     <td style="width:50%; vertical-align:top; padding-left:10px;">
       <!-- Sağ sütun içeriği (referans tablo, resim, $msg vs) -->
-        <table style="width: 80%; float: left; ">
+        <table style="width: 80%; float: left;" class="no-break">
             <caption>Sports Data Voleybol Servis Hızı Ölçüm Referans Değerleri</caption>
             <thead>
             <tr>
@@ -209,13 +245,13 @@
                 </tr>
                 </tbody>
         </table>
-        <div style="clear: both; height: 18px;"></div>
-        <h5 style="margin-top: 20px;">Profesyonel Sporcuların Servis Hızı</h5>
-        <img src="{{ asset('storage/images/prosSpeed.png') }}" alt="Profesyonellerin servis hızı" style="margin-top: 10px; width: 80%; display:block;"/>
+        <div style="clear: both; height: 12px;"></div>
+        <h2 style="margin-top: 15px;">Profesyonel Sporcuların Servis Hızı</h2>
+        <img src="{{ asset('storage/images/prosSpeed.png') }}" alt="Profesyonellerin servis hızı" style="margin-top: 8px; width: 75%; display:block;" class="no-break"/>
 
         <br>
-        <h5 style="margin-top: 20px;">Bireysel Performans Değerlendirmesi</h5>
-        <p class="message">{!! $msg !!}</p>
+        <h2 style="margin-top: 15px;">Bireysel Performans Değerlendirmesi</h2>
+        <p class="message no-break">{!! $msg !!}</p>
        </td>
   </tr>
 </table>
