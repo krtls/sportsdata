@@ -194,5 +194,11 @@ class TestReportController extends Controller
         return TestAssesment::query()
             ->where('for_whom', $forWhom)
             ->value($col) ?? 'Değerlendirme bulunamadı.';
+
+        // return "Lorem ipsum nasıl yapılır?
+        // // HTML Seçenekleri (isteğe bağlı): Eğer metnin içeriğine HTML etiketleri eklemek istiyorsanız, bu seçenekleri işaretleyin. Örneğin, <p> (paragraf), <i> (italik) veya <strong> (kalın) gibi etiketler kullanabilirsiniz. Metni Oluştur: “Oluştur” veya benzeri bir düğmeye tıklayarak Lorem Ipsum metnini üretin.
+        // // Lorem ipsum nasıl yapılır?
+        // // HTML Seçenekleri (isteğe bağlı): Eğer metnin içeriğine HTML etiketleri eklemek istiyorsanız, bu seçenekleri işaretleyin. Örneğin, <p> (paragraf), <i> (italik) veya <strong> (kalın) gibi etiketler kullanabilirsiniz. Metni Oluştur: “Oluştur” veya benzeri bir düğmeye tıklayarak Lorem Ipsum metnini üretin. ";
+            
     }
 }
